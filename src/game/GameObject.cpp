@@ -189,6 +189,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, float x, float
             m_lootState = GO_NOT_READY;                     // Initialize Traps and Fishingnode delayed in ::Update
             break;
     }
+    sHookMgr->OnSpawn(this);
 
     // Notify the battleground or outdoor pvp script
     if (map->IsBattleGround())
@@ -253,6 +254,8 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
                     }
                     break;
                 }
+                default:
+                    break;
             }
             break;
         }
@@ -449,7 +452,7 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
                 {
                     // In Instances GO_FLAG_LOCKED, GO_FLAG_INTERACT_COND or GO_FLAG_NO_INTERACT are not changed
                     uint32 currentLockOrInteractFlags = GetUInt32Value(GAMEOBJECT_FLAGS) & (GO_FLAG_LOCKED | GO_FLAG_INTERACT_COND | GO_FLAG_NO_INTERACT);
-                    SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags & ~(GO_FLAG_LOCKED | GO_FLAG_INTERACT_COND | GO_FLAG_NO_INTERACT) | currentLockOrInteractFlags);
+                    SetUInt32Value(GAMEOBJECT_FLAGS, (GetGOInfo()->flags & ~(GO_FLAG_LOCKED | GO_FLAG_INTERACT_COND | GO_FLAG_NO_INTERACT)) | currentLockOrInteractFlags);
                 }
                 else
                     SetUInt32Value(GAMEOBJECT_FLAGS, GetGOInfo()->flags);
@@ -1078,8 +1081,8 @@ void GameObject::Use(Unit* user)
             bool IsBattleGroundTrap = !radius && goInfo->trap.cooldown == 3 && m_respawnTime == 0;
 
             // FIXME: when GO casting will be implemented trap must cast spell to target
-            if (spellId = goInfo->trap.spellId)
-                caster->CastSpell(user, spellId, true, NULL, NULL, GetObjectGuid());
+            if (goInfo->trap.spellId)
+                caster->CastSpell(user, goInfo->trap.spellId, true, NULL, NULL, GetObjectGuid());
             // use template cooldown if provided
             m_cooldownTime = time(NULL) + (goInfo->trap.cooldown ? goInfo->trap.cooldown : uint32(4));
 
@@ -1713,12 +1716,14 @@ bool GameObject::IsFriendlyTo(Unit const* unit) const
 void GameObject::SetLootState(LootState state)
 {
     m_lootState = state;
+    sHookMgr->OnLootStateChanged(this, state);
     UpdateCollisionState();
 }
 
 void GameObject::SetGoState(GOState state)
 {
     SetByteValue(GAMEOBJECT_STATE, 0, state);
+    sHookMgr->OnGameObjectStateChanged(this, state);
     UpdateCollisionState();
 }
 

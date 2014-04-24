@@ -1,4 +1,4 @@
-# C(ontinued)-MaNGOS -- README  ![Build status](https://api.travis-ci.org/eluna-dev-mangos/ElunaCoreClassic.png)
+# C(ontinued)-MaNGOS -- README  ![Build status](https://api.travis-ci.org/ElunaLuaEngine/ElunaMangosClassic.png)
 
 This file is part of the CMaNGOS Project. See [AUTHORS](AUTHORS.md) file for Copyright information
 
@@ -65,6 +65,7 @@ To be able to accomplish these goals, we support and promote:
   You can find further information about Eluna at the following places:
   * [Eluna Wiki](http://wiki.emudevs.com/doku.php?id=eluna)
   * [Eluna Support Forum](http://emudevs.com)
+  * [Eluna Github](https://github.com/ElunaLuaEngine)
 
 ## License
 
